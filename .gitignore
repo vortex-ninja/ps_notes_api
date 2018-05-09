@@ -1,0 +1,13 @@
+# pycache and pyc files
+
+__pycache__/*
+*.pyc
+
+
+# environment variables
+
+.env
+
+# test files
+
+test.py
