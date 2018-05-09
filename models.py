@@ -21,6 +21,18 @@ class Note(Base):
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'version': self.version,
+            'title': self.title,
+            'content': self.content,
+            'created': self.created,  # Add formatting later
+            'modified': self.modified,  # Add formatting later
+            'deleted': self.deleted,
+        }
+
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
