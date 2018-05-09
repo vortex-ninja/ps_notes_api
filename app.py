@@ -16,12 +16,14 @@ def note_history(note_id):
     return jsonify([note.serialize for note in note_history])
 
 
+@app.route('/')
 @app.route("/notes/")
 def get_notes():
     subquery = session.query(models.Note.id,
                              func.max(models.Note.version).
                              label('latest_version')).\
-                             group_by(models.Note.id).subquery()
+                             group_by(models.Note.id).\
+                             subquery()
 
     results = session.query(models.Note).\
                         filter(models.Note.id==subquery.c.id).\
@@ -31,3 +33,25 @@ def get_notes():
                         all()
 
     return jsonify([note.serialize for note in results])
+
+
+@app.route("/note/<int:note_id>/")
+def get_note(note_id):
+    subquery = session.query(models.Note.id,
+                             func.max(models.Note.version).\
+                             label('latest_version')).\
+                             group_by(models.Note.id).\
+                             filter(models.Note.id==note_id).\
+                             subquery()
+
+    result = session.query(models.Note).\
+                           filter(models.Note.id==subquery.c.id).\
+                           filter(models.Note.version==subquery.c.latest_version).\
+                           filter(models.Note.deleted==False).\
+                           one_or_none()
+
+    if result is None:
+        return jsonify({'error': "Note doesn't exist"})
+    else:
+        return jsonify(result.serialize)
+
