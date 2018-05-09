@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from sqlalchemy.sql.expression import func
 
 import models
@@ -55,3 +55,16 @@ def get_note(note_id):
     else:
         return jsonify(result.serialize)
 
+
+@app.route("/create/", methods=['POST'])
+def add_note():
+
+    # TODO: add data validation
+
+    data = request.get_json()
+
+    new_note = models.Note(title=data['title'], content=data['content'])
+    session.add(new_note)
+    session.commit()
+
+    return jsonify(data)
