@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from sqlalchemy.sql.expression import func
 
 import models
 
@@ -13,3 +14,20 @@ def note_history(note_id):
     note_history = session.query(models.Note).filter_by(id=note_id).all()
 
     return jsonify([note.serialize for note in note_history])
+
+
+@app.route("/notes/")
+def get_notes():
+    subquery = session.query(models.Note.id,
+                             func.max(models.Note.version).
+                             label('latest_version')).\
+                             group_by(models.Note.id).subquery()
+
+    results = session.query(models.Note).\
+                        filter(models.Note.id==subquery.c.id).\
+                        filter(models.Note.version==subquery.c.latest_version).\
+                        filter(models.Note.deleted==False).\
+                        order_by(models.Note.id).\
+                        all()
+
+    return jsonify([note.serialize for note in results])
