@@ -28,7 +28,7 @@ def get_note_by_id(note_id):
 
 
 
-@app.route("/history/<int:note_id>/")
+@app.route("/history/<int:note_id>")
 def note_history(note_id):
 
     note_history = session.query(models.Note).filter_by(id=note_id).all()
@@ -37,7 +37,7 @@ def note_history(note_id):
 
 
 @app.route('/')
-@app.route("/notes/")
+@app.route("/notes")
 def get_notes():
     subquery = session.query(models.Note.id,
                              func.max(models.Note.version).
@@ -55,7 +55,7 @@ def get_notes():
     return jsonify([note.serialize for note in results])
 
 
-@app.route("/note/<int:note_id>/")
+@app.route("/note/<int:note_id>")
 def get_note(note_id):
 
     note = get_note_by_id(note_id)
@@ -66,7 +66,7 @@ def get_note(note_id):
         return jsonify(note.serialize)
 
 
-@app.route("/create/", methods=['POST'])
+@app.route("/create", methods=['POST'])
 def add_note():
 
     # TODO: add data validation
@@ -80,7 +80,7 @@ def add_note():
     return jsonify(data)
 
 
-@app.route("/update/", methods=['POST'])
+@app.route("/update", methods=['POST'])
 def update_note():
 
     # TODO: add data validation
@@ -88,7 +88,6 @@ def update_note():
     data = request.get_json()
 
     note_to_update = get_note_by_id(data['id'])
-    print(note_to_update)
 
     if note_to_update is None:
         return jsonify({'error': "Note doesn't exist."})
@@ -102,3 +101,21 @@ def update_note():
         session.commit()
 
     return jsonify(updated_note.serialize)
+
+
+@app.route("/delete", methods=['POST'])
+def delete_note():
+
+    # TODO: add data validation
+
+    data = request.get_json()
+
+    note_to_delete = get_note_by_id(data['id'])
+
+    if note_to_delete is None:
+        return jsonify({'error': "Note doesn't exist."})
+    else:
+        note_to_delete.deleted = True
+        session.commit()
+
+    return jsonify(note_to_delete.serialize)
