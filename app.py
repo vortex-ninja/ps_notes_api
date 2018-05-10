@@ -8,6 +8,26 @@ app = Flask(__name__)
 session = models.Session()
 
 
+# Helper functions
+
+def get_note_by_id(note_id):
+    subquery = session.query(models.Note.id,
+                             func.max(models.Note.version).\
+                             label('latest_version')).\
+                             group_by(models.Note.id).\
+                             filter(models.Note.id==note_id).\
+                             subquery()
+
+    note = session.query(models.Note).\
+                         filter(models.Note.id==subquery.c.id).\
+                         filter(models.Note.version==subquery.c.latest_version).\
+                         filter(models.Note.deleted==False).\
+                         one_or_none()
+
+    return note
+
+
+
 @app.route("/history/<int:note_id>/")
 def note_history(note_id):
 
@@ -37,23 +57,13 @@ def get_notes():
 
 @app.route("/note/<int:note_id>/")
 def get_note(note_id):
-    subquery = session.query(models.Note.id,
-                             func.max(models.Note.version).\
-                             label('latest_version')).\
-                             group_by(models.Note.id).\
-                             filter(models.Note.id==note_id).\
-                             subquery()
 
-    result = session.query(models.Note).\
-                           filter(models.Note.id==subquery.c.id).\
-                           filter(models.Note.version==subquery.c.latest_version).\
-                           filter(models.Note.deleted==False).\
-                           one_or_none()
+    note = get_note_by_id(note_id)
 
-    if result is None:
+    if note is None:
         return jsonify({'error': "Note doesn't exist"})
     else:
-        return jsonify(result.serialize)
+        return jsonify(note.serialize)
 
 
 @app.route("/create/", methods=['POST'])
@@ -68,3 +78,27 @@ def add_note():
     session.commit()
 
     return jsonify(data)
+
+
+@app.route("/update/", methods=['POST'])
+def update_note():
+
+    # TODO: add data validation
+
+    data = request.get_json()
+
+    note_to_update = get_note_by_id(data['id'])
+    print(note_to_update)
+
+    if note_to_update is None:
+        return jsonify({'error': "Note doesn't exist."})
+    else:
+        updated_note = models.Note(id=note_to_update.id,
+                                   title=data['title'],
+                                   content=data['content'],
+                                   created=note_to_update.created,
+                                   version=note_to_update.version + 1)
+        session.add(updated_note)
+        session.commit()
+
+    return jsonify(updated_note.serialize)
