@@ -33,6 +33,11 @@ class Note(Base):
             'deleted': self.deleted,
         }
 
+    def __str__(self):
+        return 'Note (id={}, version={}, deleted={})'.format(self.id,
+                                                             self.version,
+                                                             self.deleted)
+
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
