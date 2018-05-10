@@ -28,8 +28,8 @@ class Note(Base):
             'version': self.version,
             'title': self.title,
             'content': self.content,
-            'created': self.created,  # Add formatting later
-            'modified': self.modified,  # Add formatting later
+            'created': self.created.strftime('%Y/%m/%d %H:%M:%S'),
+            'modified': self.modified.strftime('%Y/%m/%d %H:%M:%S'),
             'deleted': self.deleted,
         }
 
