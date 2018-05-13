@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from sqlalchemy.sql.expression import func
+from functools import wraps
 
 from errors import ID_ERROR, NO_HISTORY_ERROR, NO_NOTES_ERROR, NO_NOTE_ERROR
 from errors import CREATE_ERROR, UPDATE_ERROR
@@ -14,7 +15,29 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 session = models.Session()
 
 
-# Helper functions
+ALL_METHODS = ['PUT', 'PATCH', 'HEAD', 'GET', 'POST', 'OPTIONS', 'DELETE']
+
+# Helper functions and decorators
+
+# Decorator that checks if method is allowed for an endpoint
+
+def method_check(allowed_methods):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if request.method in allowed_methods:
+                return f(*args, **kwargs)
+            else:
+                return jsonify(
+                    {
+                        "error": "method not allowed",
+                        "status": 405,
+                        "allowed methods": allowed_methods
+                    })
+
+        return decorated_function
+    return decorator
+
 
 def get_note_by_id(note_id):
     subquery = session.query(
@@ -35,7 +58,8 @@ def get_note_by_id(note_id):
     return note
 
 
-@app.route("/history/")
+@app.route("/history/", methods=ALL_METHODS)
+@method_check(['GET'])
 def note_history():
 
     data = request.args
@@ -49,8 +73,9 @@ def note_history():
         return jsonify(ID_ERROR), 400
 
 
-@app.route('/')
-@app.route("/notes/")
+@app.route('/', methods=ALL_METHODS)
+@app.route("/notes/", methods=ALL_METHODS)
+@method_check(['GET'])
 def get_notes():
     subquery = session.query(models.Note.id,
                              func.max(models.Note.version).
@@ -71,7 +96,8 @@ def get_notes():
         return jsonify([note.serialize for note in results])
 
 
-@app.route("/note/")
+@app.route("/note/", methods=ALL_METHODS)
+@method_check(['GET'])
 def get_note():
 
     data = request.args
@@ -86,7 +112,8 @@ def get_note():
         return jsonify(ID_ERROR), 400
 
 
-@app.route("/create/", methods=['POST'])
+@app.route("/create/", methods=ALL_METHODS)
+@method_check(['POST'])
 def add_note():
 
     data = request.get_json()
@@ -100,7 +127,8 @@ def add_note():
         return jsonify(CREATE_ERROR), 400
 
 
-@app.route("/update/", methods=['POST'])
+@app.route("/update/", methods=ALL_METHODS)
+@method_check(['POST'])
 def update_note():
 
     data = request.get_json()
@@ -129,7 +157,8 @@ def update_note():
         return jsonify(UPDATE_ERROR), 400
 
 
-@app.route("/delete/", methods=['POST', 'DELETE'])
+@app.route("/delete/", methods=ALL_METHODS)
+@method_check(['POST', 'DELETE'])
 def delete_note():
 
     data = request.get_json()
@@ -148,3 +177,10 @@ def delete_note():
 
     else:
         return jsonify(ID_ERROR), 400
+
+
+@app.route("/test/", methods=ALL_METHODS)
+@method_check(['POST'])
+def test():
+
+    return jsonify(request.method)
