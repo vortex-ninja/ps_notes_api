@@ -44,9 +44,9 @@ def note_history():
         if note_history:
             return jsonify([note.serialize for note in note_history])
         else:
-            return jsonify({'error': NO_HISTORY_ERROR})
+            return jsonify(NO_HISTORY_ERROR)
     else:
-        return jsonify({'error': ID_ERROR}), 400
+        return jsonify(ID_ERROR), 400
 
 
 @app.route('/')
@@ -66,7 +66,7 @@ def get_notes():
                         all()
 
     if results is None:
-        return jsonify({'error': NO_NOTES_ERROR})
+        return jsonify(NO_NOTES_ERROR)
     else:
         return jsonify([note.serialize for note in results])
 
@@ -79,11 +79,11 @@ def get_note():
     if models.Note.validate_id(data):
         note = get_note_by_id(data['id'])
         if note is None:
-            return jsonify({'error': NO_NOTE_ERROR})
+            return jsonify(NO_NOTE_ERROR)
         else:
             return jsonify(note.serialize)
     else:
-        return jsonify({'error': ID_ERROR}), 400
+        return jsonify(ID_ERROR), 400
 
 
 @app.route("/create/", methods=['POST'])
@@ -97,7 +97,7 @@ def add_note():
         session.commit()
         return jsonify(new_note.serialize)
     else:
-        return jsonify({'error': CREATE_ERROR}), 400
+        return jsonify(CREATE_ERROR), 400
 
 
 @app.route("/update/", methods=['POST'])
@@ -113,7 +113,7 @@ def update_note():
         new_content = data['content'] if 'content' in data else note_to_update.content
 
         if note_to_update is None:
-            return jsonify({'error': NO_NOTE_ERROR})
+            return jsonify(NO_NOTE_ERROR)
         else:
             updated_note = models.Note(id=note_to_update.id,
                                        title=new_title,
@@ -126,7 +126,7 @@ def update_note():
         return jsonify(updated_note.serialize)
 
     else:
-        return jsonify({'error': UPDATE_ERROR}), 400
+        return jsonify(UPDATE_ERROR), 400
 
 
 @app.route("/delete/", methods=['POST', 'DELETE'])
@@ -139,7 +139,7 @@ def delete_note():
         note_to_delete = get_note_by_id(data['id'])
 
         if note_to_delete is None:
-            return jsonify({'error': NO_NOTE_ERROR})
+            return jsonify(NO_NOTE_ERROR)
         else:
             note_to_delete.deleted = True
             session.commit()
@@ -147,4 +147,4 @@ def delete_note():
         return jsonify(note_to_delete.serialize)
 
     else:
-        return jsonify({'error': ID_ERROR}), 400
+        return jsonify(ID_ERROR), 400
