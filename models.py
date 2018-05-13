@@ -6,7 +6,7 @@ from sqlalchemy.sql import func
 import os
 
 
-engine = create_engine(os.environ["DATABASE_URL"], echo=True)
+engine = create_engine(os.environ["DATABASE_URL"], echo=False)
 Base = declarative_base()
 
 
@@ -38,6 +38,27 @@ class Note(Base):
                                                              self.version,
                                                              self.deleted)
 
+    @staticmethod
+    def validate_id(data):
+        if len(data) == 1 and 'id' in data.keys():
+            return True
+        return False
+
+    @staticmethod
+    def validate_create(data):
+        to_compare = set(['title', 'content'])
+        if data.keys() == to_compare:
+            return True
+        return False
+
+    @staticmethod
+    def validate_update(data):
+        to_compare = set(['id', 'title', 'content'])
+        data_set = set(data.keys())
+
+        if data_set <= to_compare and 'id' in data_set and len(data_set) > 1:
+            return True
+        return False
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

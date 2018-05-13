@@ -1,0 +1,6 @@
+ID_ERROR = "bad request, this endpoint accepts exactly one parameter: 'id'"
+NO_HISTORY_ERROR = "no history for this id"
+NO_NOTES_ERROR = "there are no notes in database"
+NO_NOTE_ERROR = "note doesn't exist"
+CREATE_ERROR = "bad request, this endpoint accepts exactly two parameters: 'title' and 'content'"
+UPDATE_ERROR = "bad request, this endpoint accepts exactly 2 or 3 parameters: 'id' (required), 'title', 'content'"
