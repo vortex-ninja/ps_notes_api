@@ -18,8 +18,8 @@ class Note(Base):
     created = Column(DateTime(timezone=True), server_default=func.now())
     modified = Column(DateTime(timezone=True), server_default=func.now())
     deleted = Column(Boolean, default=False)
-    title = Column(String, nullable=False)
-    content = Column(String, nullable=False)
+    title = Column(String(20), nullable=False)
+    content = Column(String(50), nullable=False)
 
     @property
     def serialize(self):
@@ -60,5 +60,9 @@ class Note(Base):
             return True
         return False
 
+
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
+session = Session()
+
+# print(Note.__table__.__dict__)
