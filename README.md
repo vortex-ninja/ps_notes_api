@@ -67,7 +67,7 @@ This will create a note, save it in a database and return it as a response when 
 
 ##### UPDATING A NOTE
 
-`curl -X POST -H "Content-Type: application/json" -d '{"id":"29", "title": "updated_note", "content": "updated_content"}' http://127.0.0.1:5000/update`
+`curl -X POST -H "Content-Type: application/json" -d '{"id":"1", "title": "updated_note", "content": "updated_content"}' http://127.0.0.1:5000/update`
 
 ##### DELETING A NOTE
 `curl -X POST -H "Content-Type: application/json" -d '{"id":"1"}' http://127.0.0.1:5000/delete`
