@@ -11,6 +11,7 @@ sqlalchemy = "*"
 "psycopg2" = "*"
 requests = "*"
 pytest = "*"
+mysql-connector = "*"
 
 [requires]
 python_version = "3.6"
