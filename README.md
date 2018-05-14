@@ -3,6 +3,9 @@
 ### OVERVIEW
 Basic REST API that manages notes created with Flask.
 
+### NOTE
+At the moment web service doesn't use in memory database as specified in requirements.
+
 ### DATABASE SETUP
 
 - install PostgreSQL:
