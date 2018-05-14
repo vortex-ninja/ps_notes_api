@@ -5,8 +5,8 @@ Basic REST API that manages notes created with Flask.
 
 ### DATABASE SETUP
 
-- please install PostgreSQL:
-- using `psql` connect to the server and create two databases with
+- install PostgreSQL:
+- using `psql` connect to the PostgreSQL server and create two databases with
 
 `CREATE DATABASE <dbname>`
 
