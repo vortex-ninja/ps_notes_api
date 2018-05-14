@@ -9,6 +9,8 @@ name = "pypi"
 flask = "*"
 sqlalchemy = "*"
 "psycopg2" = "*"
+requests = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.6"
