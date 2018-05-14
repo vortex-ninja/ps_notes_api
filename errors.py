@@ -22,4 +22,4 @@ UPDATE_ERROR = {
                     "error": "bad request, this endpoint accepts exactly 2 or 3 parameters: 'id' (required), 'title', 'content'",
                     "status": 400
             }
-
+            
