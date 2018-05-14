@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, url_for
 from sqlalchemy.sql.expression import func
 from functools import wraps
 
@@ -19,9 +19,9 @@ ALL_METHODS = ['PUT', 'PATCH', 'HEAD', 'GET', 'POST', 'OPTIONS', 'DELETE']
 
 # Helper functions and decorators
 
-# Decorator that checks if method is allowed for an endpoint
 
 def method_check(allowed_methods):
+    """Decorator that checks if method is allowed for an endpoint"""
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -40,6 +40,7 @@ def method_check(allowed_methods):
 
 
 def get_note_by_id(note_id):
+    """Returns the latest version of a note for a given id"""
     subquery = session.query(
                   models.Note.id,
                   func.max(models.Note.version).
@@ -77,11 +78,17 @@ def note_history():
 @app.route("/notes/", methods=ALL_METHODS)
 @method_check(['GET'])
 def get_notes():
+
+    # This subquery returns latest versions for all 'id's
+
     subquery = session.query(models.Note.id,
                              func.max(models.Note.version).
                              label('latest_version')).\
                              group_by(models.Note.id).\
                              subquery()
+
+    # This query joins subquery with 'notes' table to get
+    # only latest versions of all notes that are not deleted
 
     results = session.query(models.Note).\
                         filter(models.Note.id==subquery.c.id).\
@@ -122,7 +129,7 @@ def add_note():
         new_note = models.Note(title=data['title'], content=data['content'])
         session.add(new_note)
         session.commit()
-        return jsonify(new_note.serialize)
+        return jsonify(new_note.serialize), 201
     else:
         return jsonify(CREATE_ERROR), 400
 
@@ -177,10 +184,3 @@ def delete_note():
 
     else:
         return jsonify(ID_ERROR), 400
-
-
-@app.route("/test/", methods=ALL_METHODS)
-@method_check(['POST'])
-def test():
-
-    return jsonify(request.method)
