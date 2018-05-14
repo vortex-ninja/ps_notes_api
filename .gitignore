@@ -3,6 +3,8 @@
 __pycache__/*
 *.pyc
 
+# pytest cache
+.pytest_cache/
 
 # environment variables
 
@@ -10,4 +12,4 @@ __pycache__/*
 
 # test files
 
-test.py
+t1est.py
