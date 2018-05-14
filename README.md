@@ -1,15 +1,11 @@
 # ps_notes_api
-​
+
 ### OVERVIEW
 Basic REST API that manages notes created with Flask.
-​
+
 ### DATABASE SETUP
 
-- please install PostgreSQL
-
-On Ubuntu it could be done with:
-
-`sudo apt install postgresql`
+- please install PostgreSQL:
 - using `psql` connect to the server and create two databases with
 
 `CREATE DATABASE <dbname>`
