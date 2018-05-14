@@ -21,7 +21,7 @@ def flush_db(session):
 class TestCreate:
     """Class aggregating methods to test creating notes functionality"""
 
-    create_url = URL + 'create/'
+    create_url = URL + 'create'
 
     def setup_method(self):
         flush_db(session)
@@ -68,7 +68,7 @@ class TestCreate:
 class TestUpdate:
     """Class aggregating methods to test updating notes functionality"""
 
-    update_url = URL + 'update/'
+    update_url = URL + 'update'
 
     def setup_method(self):
         flush_db(session)
@@ -145,7 +145,7 @@ class TestUpdate:
 
 class TestDelete:
     """Class aggregating methods to test deleting notes functionality"""
-    delete_url = URL + 'delete/'
+    delete_url = URL + 'delete'
 
     def setup_method(self):
         flush_db(session)
@@ -215,7 +215,7 @@ class TestViews:
 
     def test_history(self):
 
-        r = requests.get(URL + 'history/', params={'id': TestViews.note1_id})
+        r = requests.get(URL + 'history', params={'id': TestViews.note1_id})
 
         notes = r.json()
 
@@ -227,7 +227,7 @@ class TestViews:
 
     def test_history_with_invalid_data(self):
 
-        r = requests.get(URL + 'history/', params={'pk': TestViews.note1_id})
+        r = requests.get(URL + 'history', params={'pk': TestViews.note1_id})
 
         data = r.json()
 
@@ -236,7 +236,7 @@ class TestViews:
 
     def test_get_all_notes(self):
 
-        r = requests.get(URL + 'notes/')
+        r = requests.get(URL + 'notes')
 
         notes = r.json()
 
@@ -249,7 +249,7 @@ class TestViews:
 
         # It should return the latest version of a note
 
-        r = requests.get(URL + 'note/', params={'id': TestViews.note2_id})
+        r = requests.get(URL + 'note', params={'id': TestViews.note2_id})
 
         note = r.json()
 
@@ -259,7 +259,7 @@ class TestViews:
 
     def test_get_deleted_note(self):
 
-        r = requests.get(URL + 'note/', params={'id': TestViews.note1_id})
+        r = requests.get(URL + 'note', params={'id': TestViews.note1_id})
 
         note = r.json()
 

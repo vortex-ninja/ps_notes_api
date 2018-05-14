@@ -59,7 +59,7 @@ def get_note_by_id(note_id):
     return note
 
 
-@app.route("/history/", methods=ALL_METHODS)
+@app.route("/history", methods=ALL_METHODS)
 @method_check(['GET'])
 def note_history():
 
@@ -75,7 +75,7 @@ def note_history():
 
 
 @app.route('/', methods=ALL_METHODS)
-@app.route("/notes/", methods=ALL_METHODS)
+@app.route("/notes", methods=ALL_METHODS)
 @method_check(['GET'])
 def get_notes():
 
@@ -103,7 +103,7 @@ def get_notes():
         return jsonify([note.serialize for note in results])
 
 
-@app.route("/note/", methods=ALL_METHODS)
+@app.route("/note", methods=ALL_METHODS)
 @method_check(['GET'])
 def get_note():
 
@@ -119,7 +119,7 @@ def get_note():
         return jsonify(ID_ERROR), 400
 
 
-@app.route("/create/", methods=ALL_METHODS)
+@app.route("/create", methods=ALL_METHODS)
 @method_check(['POST'])
 def add_note():
 
@@ -134,7 +134,7 @@ def add_note():
         return jsonify(CREATE_ERROR), 400
 
 
-@app.route("/update/", methods=ALL_METHODS)
+@app.route("/update", methods=ALL_METHODS)
 @method_check(['POST'])
 def update_note():
 
@@ -164,7 +164,7 @@ def update_note():
         return jsonify(UPDATE_ERROR), 400
 
 
-@app.route("/delete/", methods=ALL_METHODS)
+@app.route("/delete", methods=ALL_METHODS)
 @method_check(['POST', 'DELETE'])
 def delete_note():
 
